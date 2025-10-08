@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> userNotFoundException(CarNotFoundException ex, WebRequest request){
+    @ExceptionHandler(UsersNotFoundException.class)
+    public ResponseEntity<?> usersNotFoundException(UsersNotFoundException ex, WebRequest request){
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

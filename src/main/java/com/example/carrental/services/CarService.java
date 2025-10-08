@@ -1,20 +1,18 @@
 package com.example.carrental.services;
 
+import com.example.carrental.dto.CarCreateRequest;
+import com.example.carrental.dto.CarResponse;
+import com.example.carrental.dto.CarSearchRequest;
 import com.example.carrental.entities.Car;
 
 import java.util.List;
 
 public interface CarService {
-
-    Car addCar(Car car);
-
-    Car updateCar(Car car);
-
+    Car addCar(CarCreateRequest request);
+    Car updateCar(Long carId, CarCreateRequest request);
     void deleteCar(Long carId);
-
-    Car getCarById(Long carId);
-
-    List<Car> getAllCars();
-
-    List<Car> searchCars(String make, String model, boolean isAvailable);
+    CarResponse getCarById(Long carId);
+    List<CarResponse> getAllCars();
+    List<CarResponse> searchCars(CarSearchRequest request);
+    Car updateAvailability(Long carId, boolean isAvailable);
 }

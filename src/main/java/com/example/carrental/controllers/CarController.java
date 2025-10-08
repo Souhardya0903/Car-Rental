@@ -1,8 +1,10 @@
 package com.example.carrental.controllers;
 
+import com.example.carrental.dto.CarCreateRequest;
+import com.example.carrental.dto.CarResponse;
+import com.example.carrental.dto.CarSearchRequest;
 import com.example.carrental.entities.Car;
 import com.example.carrental.services.CarService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,46 +12,54 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cars")
+@RequestMapping("/api/v1/cars")
 public class CarController {
 
-    @Autowired
-    private CarService carService;
+    private final CarService carService;
 
-    @PostMapping
-    public ResponseEntity<Car> addCar(@RequestBody Car car) {
-        Car newCar = carService.addCar(car);
-        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
+    public CarController(CarService carService) {
+        this.carService = carService;
     }
 
-    @PutMapping("/{carId}")
-    public ResponseEntity<Car> updateCar(@PathVariable Long carId, @RequestBody Car car) {
-        car.setId(carId);
-        Car updatedCar = carService.updateCar(car);
-        return new ResponseEntity<>(updatedCar, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Long carId) {
-        carService.deleteCar(carId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/{carId}")
-    public ResponseEntity<Car> getCarById(@PathVariable Long carId) {
-        Car car = carService.getCarById(carId);
-        return new ResponseEntity<>(car, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Car>> getAllCars() {
-        List<Car> cars = carService.getAllCars();
+    @PostMapping("/search")
+    public ResponseEntity<List<CarResponse>> searchCars(@RequestBody CarSearchRequest request) {
+        List<CarResponse> cars = carService.searchCars(request);
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Car>> searchCars(@RequestParam String make, @RequestParam String model, @RequestParam boolean isAvailable) {
-        List<Car> cars = carService.searchCars(make, model, isAvailable);
+    @PostMapping("/addcar")
+    public ResponseEntity<Car> addCar(@RequestBody CarCreateRequest request) {
+        Car newCar = carService.addCar(request);
+        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Car> updateCar(@PathVariable Long id, @RequestBody CarCreateRequest request) {
+        Car updatedCar = carService.updateCar(id, request);
+        return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
+        carService.deleteCar(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}/availability")
+    public ResponseEntity<Car> updateAvailability(@PathVariable Long id, @RequestBody boolean isAvailable) {
+        Car updatedCar = carService.updateAvailability(id, isAvailable);
+        return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
+        CarResponse car = carService.getCarById(id);
+        return car != null ? new ResponseEntity<>(car, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<CarResponse>> getAllCars() {
+        List<CarResponse> cars = carService.getAllCars();
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 }
