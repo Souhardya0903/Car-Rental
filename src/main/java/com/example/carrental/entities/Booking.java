@@ -3,7 +3,7 @@ package com.example.carrental.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -13,9 +13,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date pickupDate;
+    private LocalDate pickupDate;
 
-    private Date dropoffDate;
+    private LocalDate dropoffDate;
 
     private String bookingStatus;
 

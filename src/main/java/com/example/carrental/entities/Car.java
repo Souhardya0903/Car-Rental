@@ -13,11 +13,16 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String make;
+
     private String model;
+
     private int year;
-    private double price;
+
     private boolean isAvailable;
+
     private String specifications;
+
     private String imageUrl;
 }

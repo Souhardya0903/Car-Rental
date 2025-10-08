@@ -46,8 +46,8 @@ public class CarController {
     }
 
     @PutMapping("/{id}/availability")
-    public ResponseEntity<Car> updateAvailability(@PathVariable Long id, @RequestBody boolean isAvailable) {
-        Car updatedCar = carService.updateAvailability(id, isAvailable);
+    public ResponseEntity<Car> updateAvailability(@PathVariable Long id) {
+        Car updatedCar = carService.updateAvailability(id);
         return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

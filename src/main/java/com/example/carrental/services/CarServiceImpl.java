@@ -21,7 +21,7 @@ public class CarServiceImpl implements CarService {
     public Car addCar(CarCreateRequest request) {
         Car car = new Car();
         mapRequestToEntity(request, car);
-        car.setAvailable(true); // Set availability to true by default
+        car.setAvailable(true);
         return carRepository.save(car);
     }
 
@@ -78,7 +78,6 @@ public class CarServiceImpl implements CarService {
         car.setMake(request.getMake());
         car.setModel(request.getModel());
         car.setYear(request.getYear());
-        car.setPrice(request.getPrice());
         car.setSpecifications(request.getSpecifications());
         car.setImageUrl(request.getImageUrl());
     }
@@ -89,7 +88,6 @@ public class CarServiceImpl implements CarService {
         response.setMake(car.getMake());
         response.setModel(car.getModel());
         response.setYear(car.getYear());
-        response.setPrice(car.getPrice());
         response.setAvailable(car.isAvailable());
         response.setSpecifications(car.getSpecifications());
         response.setImageUrl(car.getImageUrl());

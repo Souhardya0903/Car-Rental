@@ -19,5 +19,5 @@ public class CarSearchRequest {
 
     @NotNull
     private LocalDate dropofftime;
-    private Boolean isAvailable=true;
+    private Boolean isAvailable;
 }

@@ -1,12 +1,12 @@
 package com.example.carrental.services;
 
-import com.example.carrental.dtos.BookingRequest;
+import com.example.carrental.dto.BookingRequest;
 import com.example.carrental.entities.Booking;
 import com.example.carrental.entities.Car;
-import com.example.carrental.entities.User;
+import com.example.carrental.entities.Users;
 import com.example.carrental.exceptions.BookingNotFoundException;
 import com.example.carrental.exceptions.CarNotFoundException;
-import com.example.carrental.exceptions.UserNotFoundException;
+import com.example.carrental.exceptions.UsersNotFoundException;
 import com.example.carrental.repositories.BookingRepository;
 import com.example.carrental.repositories.CarRepository;
 import com.example.carrental.repositories.UserRepository;
@@ -30,7 +30,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking createBooking(BookingRequest bookingRequest) {
-        User user=userRepository.findById(bookingRequest.getCarId()).orElseThrow(()-> new UserNotFoundException("Wrong user id entered"));
+        Users user=userRepository.findById(bookingRequest.getUserId()).orElseThrow(()-> new UsersNotFoundException("Wrong user id entered"));
         Car car = carRepository.findById(bookingRequest.getCarId()).orElseThrow(()-> new CarNotFoundException("Could not find requested car"));
         Booking booking=BookingsConverter.ConvertBookingRequestToBooking(bookingRequest,car,user);
         car.setAvailable(false);
@@ -58,6 +58,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getBookingsByUserId(Long userId) {
-        return bookingRepository.findByUserId(userId);
+        return bookingRepository.findByUsers_Id(userId);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.carrental.services;
 
-import com.example.carrental.dtos.BookingRequest;
+import com.example.carrental.dto.BookingRequest;
 import com.example.carrental.entities.Booking;
 
 import java.util.List;

@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> usersNotFoundException(UsersNotFoundException ex, WebRequest request){
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<?> paymentNotFoundException(PaymentNotFoundException ex, WebRequest request){
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

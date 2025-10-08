@@ -1,8 +1,9 @@
 package com.example.carrental.controllers;
 
-import com.example.carrental.dtos.BookingRequest;
+import com.example.carrental.dto.BookingRequest;
 import com.example.carrental.entities.Booking;
 import com.example.carrental.services.BookingService;
+import com.example.carrental.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,12 @@ public class BookingController {
         return new ResponseEntity<>(newBooking, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{bookingId}")
+    @GetMapping("/find/{bookingId}")
     public Booking getBookingById(@PathVariable Long bookingId) {
         return bookingService.getBookingById(bookingId);
     }
 
-    @DeleteMapping("/{bookingId}")
+    @DeleteMapping("/cancel/{bookingId}")
     public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingId) {
         bookingService.cancelBooking(bookingId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
