@@ -1,5 +1,6 @@
 package com.example.carrental.controllers;
 
+import com.example.carrental.dtos.BookingRequest;
 import com.example.carrental.entities.Booking;
 import com.example.carrental.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +17,18 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+    @Autowired
+    private PaymentService paymentService;
+
+    @PostMapping("/create")
+    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest booking) {
         Booking newBooking = bookingService.createBooking(booking);
         return new ResponseEntity<>(newBooking, HttpStatus.CREATED);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long bookingId) {
-        Booking booking = bookingService.getBookingById(bookingId);
-        return new ResponseEntity<>(booking, HttpStatus.OK);
+    public Booking getBookingById(@PathVariable Long bookingId) {
+        return bookingService.getBookingById(bookingId);
     }
 
     @DeleteMapping("/{bookingId}")

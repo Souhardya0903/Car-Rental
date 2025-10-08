@@ -17,8 +17,6 @@ public class Booking {
 
     private Date dropoffDate;
 
-    private double totalPrice;
-
     private String bookingStatus;
 
     @ManyToOne
