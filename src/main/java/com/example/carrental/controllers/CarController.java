@@ -25,11 +25,27 @@ public class CarController {
         this.userService = userService;
     }
 
+    // --- PUBLIC ENDPOINTS --- //
+
     @PostMapping("/search")
     public ResponseEntity<List<CarResponse>> searchCars(@RequestBody CarSearchRequest request) {
         List<CarResponse> cars = carService.searchCars(request);
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
+        CarResponse car = carService.getCarById(id);
+        return car != null ? new ResponseEntity<>(car, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CarResponse>> getAllCars() {
+        List<CarResponse> cars = carService.getAllCars();
+        return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    // --- ADMIN-ONLY ENDPOINTS --- //
 
     @PostMapping
     public ResponseEntity<?> addCar(@RequestBody CarCreateRequest request, @RequestParam Long adminId) {
@@ -67,20 +83,7 @@ public class CarController {
         if (admin == null || !"ADMIN".equals(admin.getRole())) {
             return new ResponseEntity<>("Action forbidden: User is not an admin.", HttpStatus.FORBIDDEN);
         }
-
         Car updatedCar = carService.updateAvailability(id, isAvailable);
         return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
-        CarResponse car = carService.getCarById(id);
-        return car != null ? new ResponseEntity<>(car, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CarResponse>> getAllCars() {
-        List<CarResponse> cars = carService.getAllCars();
-        return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 }

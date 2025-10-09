@@ -20,6 +20,8 @@ public class Car {
 
     private int year;
 
+    private double price;
+
     private boolean isAvailable;
 
     private String specifications;

@@ -5,7 +5,6 @@ import com.example.carrental.dto.CarResponse;
 import com.example.carrental.dto.CarSearchRequest;
 import com.example.carrental.entities.Car;
 import com.example.carrental.repositories.CarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +13,11 @@ import java.util.stream.Collectors;
 @Service
 public class CarServiceImpl implements CarService {
 
-    @Autowired
-    private CarRepository carRepository;
+    private final CarRepository carRepository;
+
+    public CarServiceImpl(CarRepository carRepository) {
+        this.carRepository = carRepository;
+    }
 
     @Override
     public Car addCar(CarCreateRequest request) {
@@ -78,6 +80,7 @@ public class CarServiceImpl implements CarService {
         car.setMake(request.getMake());
         car.setModel(request.getModel());
         car.setYear(request.getYear());
+        car.setPrice(request.getPrice()); // Added this line
         car.setSpecifications(request.getSpecifications());
         car.setImageUrl(request.getImageUrl());
     }
@@ -88,6 +91,7 @@ public class CarServiceImpl implements CarService {
         response.setMake(car.getMake());
         response.setModel(car.getModel());
         response.setYear(car.getYear());
+        response.setPrice(car.getPrice()); // Added this line
         response.setAvailable(car.isAvailable());
         response.setSpecifications(car.getSpecifications());
         response.setImageUrl(car.getImageUrl());
