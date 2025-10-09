@@ -34,12 +34,12 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public Payment makePayment(Long paymentId) {
+    public PaymentResponse makePayment(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId).orElseThrow(()->new PaymentNotFoundException("Payment could not be found"));
         payment.setPaymentStatus("Paid");
         payment.getBooking().setBookingStatus("Booked");
         bookingRepo.save(payment.getBooking());
         paymentRepository.save(payment);
-        return payment;
+        return PaymentConverter.paymentToPaymentResponse(payment);
     }
 }
