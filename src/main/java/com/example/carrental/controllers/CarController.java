@@ -3,8 +3,10 @@ package com.example.carrental.controllers;
 import com.example.carrental.dto.CarCreateRequest;
 import com.example.carrental.dto.CarResponse;
 import com.example.carrental.dto.CarSearchRequest;
+import com.example.carrental.dto.UserResponse;
 import com.example.carrental.entities.Car;
 import com.example.carrental.services.CarService;
+import com.example.carrental.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +18,11 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
+    private final UserService userService;
 
-    public CarController(CarService carService) {
+    public CarController(CarService carService, UserService userService) {
         this.carService = carService;
+        this.userService = userService;
     }
 
     @PostMapping("/search")
@@ -27,27 +31,44 @@ public class CarController {
         return new ResponseEntity<>(cars, HttpStatus.OK);
     }
 
-    @PostMapping("/addcar")
-    public ResponseEntity<Car> addCar(@RequestBody CarCreateRequest request) {
+    @PostMapping
+    public ResponseEntity<?> addCar(@RequestBody CarCreateRequest request, @RequestParam Long adminId) {
+        UserResponse admin = userService.getUserById(adminId);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+            return new ResponseEntity<>("Action forbidden: User is not an admin.", HttpStatus.FORBIDDEN);
+        }
         Car newCar = carService.addCar(request);
         return new ResponseEntity<>(newCar, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Car> updateCar(@PathVariable Long id, @RequestBody CarCreateRequest request) {
+    public ResponseEntity<?> updateCar(@PathVariable Long id, @RequestBody CarCreateRequest request, @RequestParam Long adminId) {
+        UserResponse admin = userService.getUserById(adminId);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+            return new ResponseEntity<>("Action forbidden: User is not an admin.", HttpStatus.FORBIDDEN);
+        }
         Car updatedCar = carService.updateCar(id, request);
         return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCar(@PathVariable Long id, @RequestParam Long adminId) {
+        UserResponse admin = userService.getUserById(adminId);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         carService.deleteCar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}/availability")
-    public ResponseEntity<Car> updateAvailability(@PathVariable Long id) {
-        Car updatedCar = carService.updateAvailability(id);
+    public ResponseEntity<?> updateAvailability(@PathVariable Long id, @RequestBody boolean isAvailable, @RequestParam Long adminId) {
+        UserResponse admin = userService.getUserById(adminId);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+            return new ResponseEntity<>("Action forbidden: User is not an admin.", HttpStatus.FORBIDDEN);
+        }
+
+        Car updatedCar = carService.updateAvailability(id, isAvailable);
         return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -57,7 +78,7 @@ public class CarController {
         return car != null ? new ResponseEntity<>(car, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<CarResponse>> getAllCars() {
         List<CarResponse> cars = carService.getAllCars();
         return new ResponseEntity<>(cars, HttpStatus.OK);

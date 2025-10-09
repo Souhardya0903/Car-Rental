@@ -27,12 +27,12 @@ public class BookingController {
         return new ResponseEntity<>(newBooking, HttpStatus.CREATED);
     }
 
-    @GetMapping("/find/{bookingId}")
+    @GetMapping("/{bookingId}")
     public Booking getBookingById(@PathVariable Long bookingId) {
         return bookingService.getBookingById(bookingId);
     }
 
-    @DeleteMapping("/cancel/{bookingId}")
+    @DeleteMapping("/{bookingId}")
     public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingId) {
         bookingService.cancelBooking(bookingId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -40,7 +40,7 @@ public class BookingController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable Long userId) {
-        List<Booking> bookings = bookingService.getBookingsByUserId(userId);
+        List<Booking> bookings = bookingService.getBookingsByUsersId(userId);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 }

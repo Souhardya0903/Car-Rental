@@ -4,15 +4,18 @@ import com.example.carrental.dto.UserLoginRequest;
 import com.example.carrental.dto.UserRegistrationRequest;
 import com.example.carrental.dto.UserResponse;
 import com.example.carrental.entities.Users;
+import com.example.carrental.exceptions.UsersNotFoundException;
 import com.example.carrental.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserResponse createUser(UserRegistrationRequest request) {
@@ -32,15 +35,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        Users users =userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Users users = userRepository.findById(id)
+                .orElseThrow(() -> new UsersNotFoundException("User not found with id: " + id));
         return mapToResponse(users);
     }
 
     @Override
     public UserResponse updateUser(Long id, UserRegistrationRequest request) {
-        Users users =userRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("User nor Found"));
+        Users users = userRepository.findById(id)
+                .orElseThrow(()-> new UsersNotFoundException("User not found with id: " + id));
 
         users.setFirstName(request.getFirstName());
         users.setLastName(request.getLastName());
@@ -52,8 +55,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UsersNotFoundException("User not found with id: " + id);
+        }
+        userRepository.deleteById(id);
+    }
+
+    @Override
     public UserResponse login(UserLoginRequest request) {
-        Users users =userRepository.findByEmail(request.getEmail())
+        Users users = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()-> new RuntimeException("Invalid credentials"));
 
         if(!request.getPassword().equals(users.getPassword()))
