@@ -1,6 +1,7 @@
 package com.example.carrental.services;
 
 import com.example.carrental.dto.BookingRequest;
+import com.example.carrental.dto.BookingResponse;
 import com.example.carrental.entities.Booking;
 import com.example.carrental.entities.Car;
 import com.example.carrental.entities.Users;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -30,36 +32,32 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking createBooking(BookingRequest bookingRequest) {
+    public BookingResponse createBooking(BookingRequest bookingRequest) {
         Users user = userRepository.findById(bookingRequest.getUserId())
                 .orElseThrow(() -> new UsersNotFoundException("Wrong user id entered"));
         Car car = carRepository.findById(bookingRequest.getCarId())
                 .orElseThrow(() -> new CarNotFoundException("Could not find requested car"));
 
-        // Calculate the number of days for the rental.
         long numberOfDays = ChronoUnit.DAYS.between(bookingRequest.getPickupDate(), bookingRequest.getDropoffDate());
-        // Ensure a minimum of 1 day is charged.
         if (numberOfDays == 0) {
             numberOfDays = 1;
         }
-
-        // Calculate the total price.
         double totalPrice = car.getPrice() * numberOfDays;
 
-        // Use the converter to create the basic booking object.
         Booking booking = BookingsConverter.ConvertBookingRequestToBooking(bookingRequest, car, user);
-
-        // Set the calculated total price and status.
         booking.setTotalPrice(totalPrice);
         booking.setBookingStatus("Processing");
 
-        // Save the complete booking object to the database.
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+
+        return convertToResponse(savedBooking);
     }
 
     @Override
-    public Booking getBookingById(Long bookingId) {
-        return bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Could not find the booking with id:" + bookingId));
+    public BookingResponse getBookingById(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Could not find the booking with id:" + bookingId));
+        return convertToResponse(booking);
     }
 
     @Override
@@ -71,7 +69,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getBookingsByUsersId(Long userId) {
-        return bookingRepository.findByUsersId(userId);
+    public List<BookingResponse> getBookingsByUsersId(Long userId) {
+        List<Booking> bookings = bookingRepository.findByUsersId(userId);
+        return bookings.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+    private BookingResponse convertToResponse(Booking booking) {
+        BookingResponse response = new BookingResponse();
+        response.setId(booking.getId());
+        response.setPickupDate(booking.getPickupDate());
+        response.setDropoffDate(booking.getDropoffDate());
+        response.setTotalPrice(booking.getTotalPrice());
+        response.setBookingStatus(booking.getBookingStatus());
+
+        response.setCarId(booking.getCar().getId());
+        response.setCarMake(booking.getCar().getMake());
+        response.setCarModel(booking.getCar().getModel());
+
+        response.setUserId(booking.getUsers().getId());
+        response.setUserName(booking.getUsers().getFirstName()); // Or getFullName() if you have it
+
+        return response;
     }
 }

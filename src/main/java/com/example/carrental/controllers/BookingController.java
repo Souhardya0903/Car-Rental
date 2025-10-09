@@ -1,10 +1,9 @@
 package com.example.carrental.controllers;
 
 import com.example.carrental.dto.BookingRequest;
-import com.example.carrental.entities.Booking;
+import com.example.carrental.dto.BookingResponse;
 import com.example.carrental.services.BookingService;
 import com.example.carrental.services.PaymentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,25 +11,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/bookings")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/v1/bookings")
 public class BookingController {
 
-    @Autowired
-    private BookingService bookingService;
+    private final BookingService bookingService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private PaymentService paymentService;
+    public BookingController(BookingService bookingService, PaymentService paymentService) {
+        this.bookingService = bookingService;
+        this.paymentService = paymentService;
+    }
 
     @PostMapping("/create")
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest booking) {
-        Booking newBooking = bookingService.createBooking(booking);
+    public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest booking) {
+        BookingResponse newBooking = bookingService.createBooking(booking);
         return new ResponseEntity<>(newBooking, HttpStatus.CREATED);
     }
 
     @GetMapping("/{bookingId}")
-    public Booking getBookingById(@PathVariable Long bookingId) {
-        return bookingService.getBookingById(bookingId);
+    public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long bookingId) {
+        BookingResponse booking = bookingService.getBookingById(bookingId);
+        return ResponseEntity.ok(booking);
     }
 
     @DeleteMapping("/{bookingId}")
@@ -40,8 +41,8 @@ public class BookingController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable Long userId) {
-        List<Booking> bookings = bookingService.getBookingsByUsersId(userId);
+    public ResponseEntity<List<BookingResponse>> getBookingsByUserId(@PathVariable Long userId) {
+        List<BookingResponse> bookings = bookingService.getBookingsByUsersId(userId);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 }
