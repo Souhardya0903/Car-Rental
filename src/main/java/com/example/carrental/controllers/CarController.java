@@ -45,11 +45,11 @@ public class CarController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}/availability")
-    public ResponseEntity<Car> updateAvailability(@PathVariable Long id) {
-        Car updatedCar = carService.updateAvailability(id);
-        return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @PutMapping("/{id}/availability")
+//    public ResponseEntity<Car> updateAvailability(@PathVariable Long id) {
+//        Car updatedCar = carService.updateAvailability(id);
+//        return updatedCar != null ? new ResponseEntity<>(updatedCar, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {

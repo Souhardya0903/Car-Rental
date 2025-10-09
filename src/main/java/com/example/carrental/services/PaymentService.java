@@ -5,5 +5,5 @@ import com.example.carrental.entities.Payment;
 
 public interface PaymentService {
     public PaymentResponse calculateBill(Long bookingId);
-    public Payment makePayment(Long paymentId);
+    public PaymentResponse makePayment(Long paymentId);
 }

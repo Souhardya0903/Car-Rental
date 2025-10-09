@@ -7,8 +7,8 @@ public class PaymentConverter {
     public static PaymentResponse paymentToPaymentResponse(Payment payment){
         PaymentResponse paymentResponse=new PaymentResponse();
         paymentResponse.setPaymentStatus(payment.getPaymentStatus());
-        paymentResponse.setTransactionId(paymentResponse.getTransactionId());
-        paymentResponse.setAmount(paymentResponse.getAmount());
+        paymentResponse.setTransactionId(payment.getTransactionId());
+        paymentResponse.setAmount(payment.getAmount());
         return paymentResponse;
     }
 }

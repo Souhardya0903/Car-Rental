@@ -10,20 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payments")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
 
-    @PostMapping("/calculate/{bookingId}")
+    @GetMapping("/calculate/{bookingId}")
     public ResponseEntity<PaymentResponse> calculateBill(@PathVariable Long bookingId){
         PaymentResponse paymentResponse = paymentService.calculateBill(bookingId);
         return ResponseEntity.ok(paymentResponse);
     }
 
-    @PostMapping("/make-payment/{paymentId}")
-    public ResponseEntity<Payment> makePayment(@PathVariable Long paymentId){
-        Payment payment = paymentService.makePayment(paymentId);
+    @GetMapping("/make-payment/{paymentId}")
+    public ResponseEntity<PaymentResponse> makePayment(@PathVariable Long paymentId){
+        PaymentResponse payment = paymentService.makePayment(paymentId);
         return ResponseEntity.ok(payment);
     }
 }
