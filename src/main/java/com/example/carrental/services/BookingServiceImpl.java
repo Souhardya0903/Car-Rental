@@ -66,9 +66,6 @@ public class BookingServiceImpl implements BookingService {
     public void cancelBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Could not find the booking with id:" + bookingId));
-
-        // When a booking is cancelled, we just update its status.
-        // We no longer need to manually manage the car's availability flag.
         booking.setBookingStatus("Cancelled");
         bookingRepository.save(booking);
     }
